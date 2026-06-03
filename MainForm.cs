@@ -24,9 +24,12 @@ namespace SoundSuck
 
         //https://ourcodeworld.com/articles/read/702/how-to-record-the-audio-from-the-sound-card-system-audio-with-c-using-naudio-in-winforms
         // Create class-level accessible variables to store the audio recorder and capturer instance
-        WaveFileWriter? _recordedAudioWriter = null;
-        WasapiLoopbackCapture? _captureInstance = null;
-        string outputFile = @"C:\Dev\Apps\WinFormsApp1\temp.wav";
+        WaveFileWriter? _audioWriter = null;
+
+        WasapiLoopbackCapture? _loopbackCapture = null;
+
+        string _outputDir = null;
+        //string outputFile = @"C:\Dev\Apps\WinFormsApp1\temp.wav";
         #endregion
 
         #region Types
@@ -44,7 +47,7 @@ namespace SoundSuck
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
-            // Log display.
+            // Info display.
             tvInfo.Font = Font;
             tvInfo.Matchers =
             [
@@ -56,11 +59,33 @@ namespace SoundSuck
             WindowState = FormWindowState.Normal;
             StartPosition = FormStartPosition.Manual;
             Location = new Point(_settings.FormGeometry.X, _settings.FormGeometry.Y);
-            KeyPreview = true; // for routing kbd strokes through OnKeyDown first.
+            //KeyPreview = true; // for routing kbd strokes through OnKeyDown first.
 
             //// Create output.
             //_player = new(_settings.WavOutDevice, int.Parse(_settings.Latency), _waveOutSwapper);
             //_player.PlaybackStopped += Player_PlaybackStopped;
+
+            if (_settings.OutputDir != "")
+            {
+                // explicit
+                if (Path.Exists(_settings.OutputDir))
+                {
+                    _outputDir = _settings.OutputDir;
+                }
+                else
+                {
+                    Tell(true, $"Invalid dir: {_settings.OutputDir}");
+                }
+            }
+            else
+            {
+                // default
+                _outputDir = Path.Combine(Environment.CurrentDirectory, "temp");
+                DirectoryInfo di = new(_outputDir);
+                di.Create();
+            }
+
+            var ppp = MakeFilePath();
 
             // Other UI items.
             ToolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
@@ -118,6 +143,24 @@ namespace SoundSuck
         }
         #endregion
 
+        string MakeFilePath()
+        {
+            //string snow = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_sss");
+            Guid guid = Guid.NewGuid();
+
+            var bytes = guid.ToByteArray();
+
+            return Path.Combine(_outputDir, $"booga.wav");
+            //string? newfn = null;
+            //if (_outputDir is not null)
+            //{
+            //    newfn = $"_{snow}.wav";
+            //}
+
+            //return newfn;
+        }
+
+
         #region Do the work
         /// <summary>
         /// 
@@ -126,71 +169,76 @@ namespace SoundSuck
         /// <param name="e"></param>
         void Record_CheckedChanged(object sender, EventArgs e)
         {
-            if (btnRecord.Checked)
+            if (btnRecord.Checked) // Start
             {
-                OnStartRecordingClick_2();
+                // Redefine the capturer instance with a new instance of the LoopbackCapture class
+                _loopbackCapture = new WasapiLoopbackCapture();
+
+                // Redefine the audio writer instance with the given configuration
+                _audioWriter = new WaveFileWriter("outputFile", _loopbackCapture.WaveFormat);
+
+                // When the capturer receives audio, start writing the buffer into the mentioned file
+                _loopbackCapture.DataAvailable += (s, a) =>
+                {
+                    _audioWriter.Write(a.Buffer, 0, a.BytesRecorded);
+                };
+
+                // When the Capturer Stops
+                _loopbackCapture.RecordingStopped += (s, a) =>
+                {
+                    _audioWriter.Dispose();
+                    _audioWriter = null;
+                    _loopbackCapture.Dispose();
+                };
+
+                // Start recording.
+                _loopbackCapture.StartRecording();
             }
-            else
+            else // Stop
             {
-                OnStopRecordingClick_2();
+                _loopbackCapture?.StopRecording();
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void OnStartRecordingClick_2()
-        {
-            // Redefine the capturer instance with a new instance of the LoopbackCapture class
-            _captureInstance = new WasapiLoopbackCapture();
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //void OnStartRecordingClick_2()
+        //{
+        //    // Redefine the capturer instance with a new instance of the LoopbackCapture class
+        //    _captureInstance = new WasapiLoopbackCapture();
 
-            // Redefine the audio writer instance with the given configuration
-            _recordedAudioWriter = new WaveFileWriter(outputFile, _captureInstance.WaveFormat);
+        //    // Redefine the audio writer instance with the given configuration
+        //    _recordedAudioWriter = new WaveFileWriter(outputFile, _captureInstance.WaveFormat);
 
-            // When the capturer receives audio, start writing the buffer into the mentioned file
-            _captureInstance.DataAvailable += (s, a) =>
-            {
-                _recordedAudioWriter.Write(a.Buffer, 0, a.BytesRecorded);
-            };
+        //    // When the capturer receives audio, start writing the buffer into the mentioned file
+        //    _captureInstance.DataAvailable += (s, a) =>
+        //    {
+        //        _recordedAudioWriter.Write(a.Buffer, 0, a.BytesRecorded);
+        //    };
 
-            // When the Capturer Stops
-            _captureInstance.RecordingStopped += (s, a) =>
-            {
-                _recordedAudioWriter.Dispose();
-                _recordedAudioWriter = null;
-                _captureInstance.Dispose();
-            };
+        //    // When the Capturer Stops
+        //    _captureInstance.RecordingStopped += (s, a) =>
+        //    {
+        //        _recordedAudioWriter.Dispose();
+        //        _recordedAudioWriter = null;
+        //        _captureInstance.Dispose();
+        //    };
 
-            // Start recording.
-            _captureInstance.StartRecording();
-        }
+        //    // Start recording.
+        //    _captureInstance.StartRecording();
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void OnStopRecordingClick_2()
-        {
-            _captureInstance.StopRecording();
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //void OnStopRecordingClick_2()
+        //{
+        //    _captureInstance.StopRecording();
+        //}
         #endregion
 
-        /// <summary>
-        /// Do some global key handling. Space bar is used for stop/start playing.
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Space:
-                    // Toggle.
-                    //UpdateState(btnPlay.Checked ? AppState.Stop : AppState.Play);
-                    e.Handled = true;
-                    break;
-            }
 
-            base.OnKeyDown(e);
-        }
 
         #region Settings
         /// <summary>
@@ -239,47 +287,25 @@ namespace SoundSuck
         }
         #endregion
 
-        #region Utilities
-        /// <summary>
-        /// Utility to get filename from the user.
-        /// </summary>
-        /// <param name="wavOnly">Output is only wav.</param>
-        /// <returns>FileName or empty if cancelled.</returns>
-        string GetUserFileName(bool wavOnly)
-        {
-            string fn = "";
-
-            using OpenFileDialog openDlg = new();
-
-            if (wavOnly)
-            {
-                openDlg.Filter = $"Wave Files|*.wav";
-                openDlg.Title = "Select a wave file";
-            }
-            else
-            {
-                // Output is only wav.
-                //openDlg.Filter = $"Audio Files|{AudioLibDefs.AUDIO_FILE_TYPES}";
-                openDlg.Title = "Select an audio file";
-            }
-
-            if (openDlg.ShowDialog() == DialogResult.OK)
-            {
-                fn = openDlg.FileName;
-            }
-
-            return fn;           
-        }
-
+        #region Internals
         /// <summary>Tell me something good.</summary>
+        /// <param name="err">What</param>
         /// <param name="s">What</param>
-        /// <param name="file"></param>
-        /// <param name="line"></param>
-        void Tell(string s, [CallerFilePath] string file = "", [CallerLineNumber] int line = -1)
+        void Tell(bool err, string s)
         {
-            var fn = Path.GetFileName(file);
-            tvInfo.Append($"{fn}({line}) {s}");
+            if (err) tvInfo.Append($"ERR {s}");
+            else tvInfo.Append($"{s}");
         }
+
+        ///// <summary>Tell me something good.</summary>
+        ///// <param name="s">What</param>
+        ///// <param name="file"></param>
+        ///// <param name="line"></param>
+        //void Tell(string s, [CallerFilePath] string file = "", [CallerLineNumber] int line = -1)
+        //{
+        //    var fn = Path.GetFileName(file);
+        //    tvInfo.Append($"{fn}({line}) {s}");
+        //}
         #endregion
     }
 }
