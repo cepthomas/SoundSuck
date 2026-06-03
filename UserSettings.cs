@@ -24,6 +24,11 @@ namespace SoundSuck
         [Description("Where to put captured audio files.")]
         [Browsable(true)]
         public string OutputDir { get; set; } = "";
+
+        [DisplayName("Save As MP3")]
+        [Description("Save as mp3 otherwise wav (default).")]
+        [Browsable(true)]
+        public bool SaveAsMp3 { get; set; } = false;
         #endregion
 
         #region Persisted Non-editable Persisted Properties

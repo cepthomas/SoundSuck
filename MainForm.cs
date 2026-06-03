@@ -12,6 +12,7 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
+using NAudio.Lame;
 
 
 namespace SoundSuck
@@ -26,7 +27,8 @@ namespace SoundSuck
         /// https://ourcodeworld.com/articles/read/702/how-to-record-the-audio-from-the-sound-card-system-audio-with-c-using-naudio-in-winforms
         /// TODO new NAudio3 changes this interface.
         /// </summary>
-        WaveFileWriter? _audioWriter = null;
+        Stream? _audioWriter = null;
+        //WaveFileWriter? _audioWriter = null;
         WasapiLoopbackCapture? _loopbackCapture = null;
 
         /// <summary>Where you going?</summary>
@@ -149,11 +151,15 @@ namespace SoundSuck
                 _loopbackCapture = new WasapiLoopbackCapture();
                 //_loopbackCapture.WaveFormat = new WaveFormat(44100, 16, 2);
 
+                var ext = _settings.SaveAsMp3 ? "mp3" : "wav";
                 string snow = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_sss");
-                string fn = $"{snow}.wav";
-                _audioWriter = new WaveFileWriter(Path.Combine(_outputDir, fn), _loopbackCapture.WaveFormat);
+                var fpath = Path.Combine(_outputDir, $"{snow}.{ext}");
 
-                Tell(false, $"Start recording to {fn}");
+                _audioWriter = _settings.SaveAsMp3 ?
+                    new WaveFileWriter(fpath, _loopbackCapture.WaveFormat) :
+                    new LameMP3FileWriter(fpath, _loopbackCapture.WaveFormat, 128);
+
+                Tell(false, $"Start recording to {fpath}");
                 _loopbackCapture.DataAvailable += (s, a) =>
                 {
                     _audioWriter.Write(a.Buffer, 0, a.BytesRecorded);
@@ -181,7 +187,7 @@ namespace SoundSuck
 
                 _loopbackCapture.RecordingStopped += (s, a) =>
                 {
-                    Tell(false, $"Finished recording to {fn}");
+                    Tell(false, $"Finished recording to {fpath}");
                     _audioWriter.Dispose();
                     _audioWriter = null;
                     _loopbackCapture.Dispose();
