@@ -20,18 +20,15 @@
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            ToolStrip = new System.Windows.Forms.ToolStrip();
-            btnRecord = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
-            toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            meterLevel = new Ephemera.NBagOfUis.ToolStripMeter();
-            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            btnSettings = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            btnAbout = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             toolTip = new System.Windows.Forms.ToolTip(components);
+            btnRecord = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
+            meterLevel = new Ephemera.NBagOfUis.ToolStripMeter();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            btnSettings = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            ToolStrip = new System.Windows.Forms.ToolStrip();
             tvInfo = new Ephemera.NBagOfUis.TextViewer();
             ToolStrip.SuspendLayout();
             SuspendLayout();
@@ -56,16 +53,6 @@
             toolStripSeparator8.Name = "toolStripSeparator8";
             toolStripSeparator8.Size = new System.Drawing.Size(228, 6);
             // 
-            // ToolStrip
-            // 
-            ToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnRecord, toolStripSeparator5, sldVolume, toolStripSeparator11, meterLevel, toolStripSeparator4, btnSettings, toolStripSeparator10, btnAbout, toolStripSeparator12 });
-            ToolStrip.Location = new System.Drawing.Point(0, 0);
-            ToolStrip.Name = "ToolStrip";
-            ToolStrip.Size = new System.Drawing.Size(590, 43);
-            ToolStrip.TabIndex = 1;
-            ToolStrip.Text = "toolStrip";
-            // 
             // btnRecord
             // 
             btnRecord.AutoSize = false;
@@ -79,10 +66,10 @@
             btnRecord.Text = "toolStripButton1";
             btnRecord.ToolTipText = "Record";
             // 
-            // toolStripSeparator5
+            // toolStripSeparator6
             // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(6, 43);
             // 
             // sldVolume
             // 
@@ -100,11 +87,6 @@
             sldVolume.ToolTipText = "Master volume";
             sldVolume.Value = 1D;
             // 
-            // toolStripSeparator11
-            // 
-            toolStripSeparator11.Name = "toolStripSeparator11";
-            toolStripSeparator11.Size = new System.Drawing.Size(6, 43);
-            // 
             // meterLevel
             // 
             meterLevel.AutoSize = false;
@@ -118,44 +100,37 @@
             meterLevel.Size = new System.Drawing.Size(150, 30);
             meterLevel.Text = "toolStripMeter1";
             // 
-            // toolStripSeparator4
+            // toolStripSeparator5
             // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 43);
             // 
             // btnSettings
             // 
             btnSettings.AutoSize = false;
             btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             btnSettings.Image = Properties.Resources.glyphicons_137_cogwheel;
-            btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnSettings.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             btnSettings.Name = "btnSettings";
             btnSettings.Size = new System.Drawing.Size(40, 40);
             btnSettings.Text = "toolStripSplitButton1";
             btnSettings.ToolTipText = "Settings";
             // 
-            // toolStripSeparator10
+            // toolStripSeparator4
             // 
-            toolStripSeparator10.Name = "toolStripSeparator10";
-            toolStripSeparator10.Size = new System.Drawing.Size(6, 43);
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(6, 43);
             // 
-            // btnAbout
+            // ToolStrip
             // 
-            btnAbout.AutoSize = false;
-            btnAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            btnAbout.Image = Properties.Resources.glyphicons_195_question_sign;
-            btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnAbout.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            btnAbout.Name = "btnAbout";
-            btnAbout.Size = new System.Drawing.Size(40, 40);
-            btnAbout.Text = "toolStripButton1";
-            btnAbout.ToolTipText = "About";
-            // 
-            // toolStripSeparator12
-            // 
-            toolStripSeparator12.Name = "toolStripSeparator12";
-            toolStripSeparator12.Size = new System.Drawing.Size(6, 43);
+            ToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnRecord, toolStripSeparator6, meterLevel, toolStripSeparator5, btnSettings, toolStripSeparator4, sldVolume });
+            ToolStrip.Location = new System.Drawing.Point(0, 0);
+            ToolStrip.Name = "ToolStrip";
+            ToolStrip.Size = new System.Drawing.Size(587, 43);
+            ToolStrip.TabIndex = 1;
+            ToolStrip.Text = "toolStrip";
             // 
             // tvInfo
             // 
@@ -166,7 +141,7 @@
             tvInfo.MaxText = 5000;
             tvInfo.Name = "tvInfo";
             tvInfo.Prompt = "> ";
-            tvInfo.Size = new System.Drawing.Size(590, 203);
+            tvInfo.Size = new System.Drawing.Size(587, 203);
             tvInfo.TabIndex = 92;
             tvInfo.TabStop = false;
             tvInfo.WordWrap = true;
@@ -175,7 +150,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(590, 251);
+            ClientSize = new System.Drawing.Size(587, 251);
             Controls.Add(ToolStrip);
             Controls.Add(tvInfo);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -190,24 +165,19 @@
         #endregion
 
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.ToolStrip ToolStrip;
-
-        private Ephemera.NBagOfUis.TextViewer tvInfo;
-        private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
-        private Ephemera.NBagOfUis.ToolStripMeter meterLevel;
-
-        private System.Windows.Forms.ToolStripButton btnRecord;
-        private System.Windows.Forms.ToolStripButton btnSettings;
-        private System.Windows.Forms.ToolStripButton btnAbout;
 
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripButton btnRecord;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
+        private Ephemera.NBagOfUis.ToolStripMeter meterLevel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripButton btnSettings;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStrip ToolStrip;
+        private Ephemera.NBagOfUis.TextViewer tvInfo;
     }
 }

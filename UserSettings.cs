@@ -27,8 +27,8 @@ namespace SoundSuck
         #endregion
 
         #region Persisted Non-editable Persisted Properties
-        [Browsable(false)]
-        public double Volume { get; set; } = 0.8; // AudioLibDefs.MAX_VOLUME / 2;
+        //[Browsable(false)]
+        //public double Volume { get; set; } = 0.8; // AudioLibDefs.MAX_VOLUME / 2;
         #endregion
     }
 }

@@ -22,19 +22,15 @@ namespace SoundSuck
         /// <summary>The settings.</summary>
         readonly UserSettings _settings;
 
-        //https://ourcodeworld.com/articles/read/702/how-to-record-the-audio-from-the-sound-card-system-audio-with-c-using-naudio-in-winforms
-        // Create class-level accessible variables to store the audio recorder and capturer instance
+        /// <summary>
+        /// https://ourcodeworld.com/articles/read/702/how-to-record-the-audio-from-the-sound-card-system-audio-with-c-using-naudio-in-winforms
+        /// TODO new NAudio3 changes this interface.
+        /// </summary>
         WaveFileWriter? _audioWriter = null;
-
         WasapiLoopbackCapture? _loopbackCapture = null;
 
-        string _outputDir = null;
-        //string outputFile = @"C:\Dev\Apps\WinFormsApp1\temp.wav";
-        #endregion
-
-        #region Types
-        ///// <summary>What are we doing.</summary>
-        //public enum AppState { Stop, Play, Rewind, Complete, Dead }
+        /// <summary>Where you going?</summary>
+        readonly string _outputDir = "";
         #endregion
 
         #region Lifecycle
@@ -59,11 +55,6 @@ namespace SoundSuck
             WindowState = FormWindowState.Normal;
             StartPosition = FormStartPosition.Manual;
             Location = new Point(_settings.FormGeometry.X, _settings.FormGeometry.Y);
-            //KeyPreview = true; // for routing kbd strokes through OnKeyDown first.
-
-            //// Create output.
-            //_player = new(_settings.WavOutDevice, int.Parse(_settings.Latency), _waveOutSwapper);
-            //_player.PlaybackStopped += Player_PlaybackStopped;
 
             if (_settings.OutputDir != "")
             {
@@ -74,7 +65,7 @@ namespace SoundSuck
                 }
                 else
                 {
-                    Tell(true, $"Invalid dir: {_settings.OutputDir}");
+                    throw new ArgumentException($"Invalid dir: {_settings.OutputDir}");
                 }
             }
             else
@@ -85,31 +76,34 @@ namespace SoundSuck
                 di.Create();
             }
 
-            var ppp = MakeFilePath();
+            btnRecord.CheckedChanged += Record_CheckedChanged;
+            //btnAbout.Click += (sender, e) => { };
+            btnSettings.Click += (sender, e) => EditSettings();
 
             // Other UI items.
             ToolStrip.Renderer = new ToolStripCheckBoxRenderer() { SelectedColor = _settings.DrawColor };
 
             sldVolume.DrawColor = _settings.DrawColor;
-            sldVolume.Value = _settings.Volume;
-            //sldVolume.ValueChanged += (_, __) => _player.Volume = (float)sldVolume.Value;
+            sldVolume.Minimum = 0.0;
+            sldVolume.Maximum = 2.0;
+            sldVolume.Value = 1.0;
+            sldVolume.Visible = false; //TODO use volume?
+
+            meterLevel.Minimum = 0.0;
+            meterLevel.Maximum = 1.0;
+            meterLevel.MeterType = MeterType.Linear;// ContinuousDots;
+            meterLevel.DrawColor = _settings.DrawColor;
 
             Text = $"SoundSuck {MiscUtils.GetVersionString()}";
+            Tell(false, Text);
         }
 
         /// <summary>
-        /// Form is legal now. Init things that want to log.
+        /// Form is legal now.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            //if (!_player.Valid)
-            //{
-            //    var s = $"Something wrong with your audio output device:{_settings.WavOutDevice}";
-            //    _logger.Error(s);
-            //    UpdateState(AppState.Dead);
-            //}
-
             base.OnLoad(e);
         }
 
@@ -119,7 +113,6 @@ namespace SoundSuck
         /// <param name="e"></param>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            LogManager.Stop();
             SaveSettings();
             base.OnFormClosing(e);
         }
@@ -135,31 +128,13 @@ namespace SoundSuck
                 components.Dispose();
             }
 
-            //// My stuff here.
-            //_player.Run(false);
-            //_player.Dispose();
+            // My stuff here.
+            _loopbackCapture?.StopRecording();
+            _loopbackCapture?.Dispose();
 
             base.Dispose(disposing);
         }
         #endregion
-
-        string MakeFilePath()
-        {
-            //string snow = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_sss");
-            Guid guid = Guid.NewGuid();
-
-            var bytes = guid.ToByteArray();
-
-            return Path.Combine(_outputDir, $"booga.wav");
-            //string? newfn = null;
-            //if (_outputDir is not null)
-            //{
-            //    newfn = $"_{snow}.wav";
-            //}
-
-            //return newfn;
-        }
-
 
         #region Do the work
         /// <summary>
@@ -167,31 +142,52 @@ namespace SoundSuck
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Record_CheckedChanged(object sender, EventArgs e)
+        void Record_CheckedChanged(object? sender, EventArgs e)
         {
             if (btnRecord.Checked) // Start
             {
-                // Redefine the capturer instance with a new instance of the LoopbackCapture class
                 _loopbackCapture = new WasapiLoopbackCapture();
+                //_loopbackCapture.WaveFormat = new WaveFormat(44100, 16, 2);
 
-                // Redefine the audio writer instance with the given configuration
-                _audioWriter = new WaveFileWriter("outputFile", _loopbackCapture.WaveFormat);
+                string snow = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_sss");
+                string fn = $"{snow}.wav";
+                _audioWriter = new WaveFileWriter(Path.Combine(_outputDir, fn), _loopbackCapture.WaveFormat);
 
-                // When the capturer receives audio, start writing the buffer into the mentioned file
+                Tell(false, $"Start recording to {fn}");
                 _loopbackCapture.DataAvailable += (s, a) =>
                 {
                     _audioWriter.Write(a.Buffer, 0, a.BytesRecorded);
+
+                    // Metering.
+                    if (a.BytesRecorded > 0)
+                    {
+                        float min = float.MaxValue;
+                        float max = float.MinValue;
+
+                        float sum = 0;
+                        float[] f1 = new float[a.BytesRecorded / 4];
+                        for (int i = 0; i < a.BytesRecorded; i += 4)
+                        {
+                            var val = BitConverter.ToSingle(a.Buffer, i);
+                            f1[i / 4] = val;
+                            sum += val;
+                            min = Math.Min(min, val);
+                            max = Math.Max(max, val);
+                        }
+                        double avg = sum / a.BytesRecorded / 4;
+                        meterLevel.AddValue(Math.Max(max, -min));
+                    }
                 };
 
-                // When the Capturer Stops
                 _loopbackCapture.RecordingStopped += (s, a) =>
                 {
+                    Tell(false, $"Finished recording to {fn}");
                     _audioWriter.Dispose();
                     _audioWriter = null;
                     _loopbackCapture.Dispose();
+                    meterLevel.AddValue(0);
                 };
 
-                // Start recording.
                 _loopbackCapture.StartRecording();
             }
             else // Stop
@@ -199,46 +195,7 @@ namespace SoundSuck
                 _loopbackCapture?.StopRecording();
             }
         }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //void OnStartRecordingClick_2()
-        //{
-        //    // Redefine the capturer instance with a new instance of the LoopbackCapture class
-        //    _captureInstance = new WasapiLoopbackCapture();
-
-        //    // Redefine the audio writer instance with the given configuration
-        //    _recordedAudioWriter = new WaveFileWriter(outputFile, _captureInstance.WaveFormat);
-
-        //    // When the capturer receives audio, start writing the buffer into the mentioned file
-        //    _captureInstance.DataAvailable += (s, a) =>
-        //    {
-        //        _recordedAudioWriter.Write(a.Buffer, 0, a.BytesRecorded);
-        //    };
-
-        //    // When the Capturer Stops
-        //    _captureInstance.RecordingStopped += (s, a) =>
-        //    {
-        //        _recordedAudioWriter.Dispose();
-        //        _recordedAudioWriter = null;
-        //        _captureInstance.Dispose();
-        //    };
-
-        //    // Start recording.
-        //    _captureInstance.StartRecording();
-        //}
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //void OnStopRecordingClick_2()
-        //{
-        //    _captureInstance.StopRecording();
-        //}
         #endregion
-
-
 
         #region Settings
         /// <summary>
@@ -247,34 +204,11 @@ namespace SoundSuck
         void EditSettings()
         {
             var changes = SettingsEditor.Edit(_settings, "User Settings", 500);
-
-            // Detect changes of interest.
-            bool restart = false;
-
-            foreach (var (name, cat) in changes)
-            {
-                switch(name)
-                {
-                    case "WavOutDevice":
-                    case "TODO1 these":
-                    case "DrawColor":
-                    case "WaveColor":
-                    case "FileLogLevel":
-                    case "NotifLogLevel":
-                        restart = true;
-                        break;
-                    case "SplitterPosition":
-                    case "SingleClickSelect":
-                        break;
-                }
-            }
-
-            if (restart)
+            if (changes.Count > 0)
             {
                 MessageBox.Show("Restart required for device changes to take effect");
+                SaveSettings();
             }
-
-            SaveSettings();
         }
 
         /// <summary>
@@ -296,16 +230,6 @@ namespace SoundSuck
             if (err) tvInfo.Append($"ERR {s}");
             else tvInfo.Append($"{s}");
         }
-
-        ///// <summary>Tell me something good.</summary>
-        ///// <param name="s">What</param>
-        ///// <param name="file"></param>
-        ///// <param name="line"></param>
-        //void Tell(string s, [CallerFilePath] string file = "", [CallerLineNumber] int line = -1)
-        //{
-        //    var fn = Path.GetFileName(file);
-        //    tvInfo.Append($"{fn}({line}) {s}");
-        //}
         #endregion
     }
 }

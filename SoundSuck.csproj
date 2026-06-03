@@ -63,4 +63,10 @@
       </EmbeddedResource>
     </ItemGroup>
 
+    <!-- TODO <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(TOOLS_PATH)' != ''">
+      <Exec Command="copy /Y $(OutputPath)SoundSuck.exe $(TOOLS_PATH)" />
+      <Exec Command="copy /Y $(OutputPath)SoundSuck.dll $(TOOLS_PATH)" />
+      <Exec Command="copy /Y $(OutputPath)SoundSuck.runtimeconfig.json $(TOOLS_PATH)" />
+    </Target> -->
+
 </Project>
