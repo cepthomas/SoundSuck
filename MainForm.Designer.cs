@@ -135,7 +135,7 @@
             // tvInfo
             // 
             tvInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            tvInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
             tvInfo.Location = new System.Drawing.Point(0, 46);
             tvInfo.MatchUseBackground = true;
             tvInfo.MaxText = 5000;

@@ -21,7 +21,7 @@ namespace SoundSuck
         public Color DrawColor { get; set; } = Color.MediumOrchid;
 
         [DisplayName("Output Directory")]
-        [Description("Where to put captured audio files.")]
+        [Description("Where to put captured audio files. Can be empty.")]
         [Browsable(true)]
         public string OutputDir { get; set; } = "";
 
