@@ -15,7 +15,7 @@ namespace SoundSuck
     {
         #region Persisted Editable Properties
         [DisplayName("Control Color")]
-        [Description("The color used for active control surfaces.")]
+        [Description("The color used for control surfaces.")]
         [Browsable(true)]
         [JsonConverter(typeof(JsonColorConverter))]
         public Color DrawColor { get; set; } = Color.MediumOrchid;
@@ -33,7 +33,7 @@ namespace SoundSuck
 
         #region Persisted Non-editable Persisted Properties
         //[Browsable(false)]
-        //public double Volume { get; set; } = 0.8; // AudioLibDefs.MAX_VOLUME / 2;
+        //public double Gain { get; set; } = 1.0;
         #endregion
     }
 }

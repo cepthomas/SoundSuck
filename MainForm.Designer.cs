@@ -23,7 +23,7 @@
             toolTip = new System.Windows.Forms.ToolTip(components);
             btnRecord = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            sldVolume = new Ephemera.NBagOfUis.ToolStripSlider();
+            sldGain = new Ephemera.NBagOfUis.ToolStripSlider();
             meterLevel = new Ephemera.NBagOfUis.ToolStripMeter();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             btnSettings = new System.Windows.Forms.ToolStripButton();
@@ -71,21 +71,21 @@
             toolStripSeparator6.Name = "toolStripSeparator6";
             toolStripSeparator6.Size = new System.Drawing.Size(6, 43);
             // 
-            // sldVolume
+            // sldGain
             // 
-            sldVolume.AccessibleName = "sldVolume";
-            sldVolume.AutoSize = false;
-            sldVolume.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            sldVolume.DrawColor = System.Drawing.Color.White;
-            sldVolume.Label = "Volume";
-            sldVolume.Maximum = 2D;
-            sldVolume.Minimum = 0D;
-            sldVolume.Name = "sldVolume";
-            sldVolume.Resolution = 0.05D;
-            sldVolume.Size = new System.Drawing.Size(150, 38);
-            sldVolume.Text = "vol";
-            sldVolume.ToolTipText = "Master volume";
-            sldVolume.Value = 1D;
+            sldGain.AccessibleName = "sldGain";
+            sldGain.AutoSize = false;
+            sldGain.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            sldGain.DrawColor = System.Drawing.Color.White;
+            sldGain.Label = "Gain";
+            sldGain.Maximum = 2D;
+            sldGain.Minimum = 0D;
+            sldGain.Name = "sldGain";
+            sldGain.Resolution = 0.05D;
+            sldGain.Size = new System.Drawing.Size(150, 38);
+            sldGain.Text = "vol";
+            sldGain.ToolTipText = "Master gain";
+            sldGain.Value = 1D;
             // 
             // meterLevel
             // 
@@ -125,7 +125,7 @@
             // ToolStrip
             // 
             ToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnRecord, toolStripSeparator6, meterLevel, toolStripSeparator5, btnSettings, toolStripSeparator4, sldVolume });
+            ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnRecord, toolStripSeparator6, meterLevel, toolStripSeparator5, btnSettings, toolStripSeparator4, sldGain });
             ToolStrip.Location = new System.Drawing.Point(0, 0);
             ToolStrip.Name = "ToolStrip";
             ToolStrip.Size = new System.Drawing.Size(587, 43);
@@ -172,7 +172,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripButton btnRecord;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private Ephemera.NBagOfUis.ToolStripSlider sldVolume;
+        private Ephemera.NBagOfUis.ToolStripSlider sldGain;
         private Ephemera.NBagOfUis.ToolStripMeter meterLevel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton btnSettings;

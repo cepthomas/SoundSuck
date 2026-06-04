@@ -8,7 +8,7 @@
         <TargetFramework>net8.0-windows</TargetFramework>
 
         <!-- <ApplicationIcon>tiger.ico</ApplicationIcon> -->
-        <Version>2.0.0</Version>
+        <Version>1.0</Version>
         <Description>Audio file tool</Description>
         <Copyright>MIT License</Copyright>
         <RootNamespace>SoundSuck</RootNamespace>
@@ -63,11 +63,5 @@
         <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
-
-    <!-- TODO <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(TOOLS_PATH)' != ''">
-      <Exec Command="copy /Y $(OutputPath)SoundSuck.exe $(TOOLS_PATH)" />
-      <Exec Command="copy /Y $(OutputPath)SoundSuck.dll $(TOOLS_PATH)" />
-      <Exec Command="copy /Y $(OutputPath)SoundSuck.runtimeconfig.json $(TOOLS_PATH)" />
-    </Target> -->
 
 </Project>

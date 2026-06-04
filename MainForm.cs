@@ -10,9 +10,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using NAudio.Lame;
 using Ephemera.NBagOfTricks;
 using Ephemera.NBagOfUis;
-using NAudio.Lame;
 
 
 namespace SoundSuck
@@ -70,20 +70,20 @@ namespace SoundSuck
 
             meterLevel.Minimum = 0.0;
             meterLevel.Maximum = 1.0;
-            meterLevel.MeterType = MeterType.Linear;// ContinuousDots;
+            meterLevel.MeterType = MeterType.Linear;
             meterLevel.DrawColor = _settings.DrawColor;
 
-            //TODO use volume?
-            sldVolume.Visible = false;
-            sldVolume.DrawColor = _settings.DrawColor;
-            sldVolume.Minimum = 0.0;
-            sldVolume.Maximum = 2.0;
-            sldVolume.Value = 1.0;
+            //TODO use gain?
+            sldGain.Visible = false;
+            sldGain.DrawColor = _settings.DrawColor;
+            sldGain.Minimum = 0.0;
+            sldGain.Maximum = 2.0;
+            sldGain.Value = 1.0;
 
             Text = $"SoundSuck {MiscUtils.GetVersionString()}";
             Tell(Text);
 
-            DevStuff();
+            //DevStuff();
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace SoundSuck
                     int num = args.BytesRecorded;
                     _audioWriter.Write(args.Buffer, 0, num);
 
-                    // Metering - abs max.
+                    // Metering - abs max. TODO apply gain here.
                     float max = float.MinValue;
                     for (int i = 0; i < num; i += 4)
                     {
@@ -158,10 +158,13 @@ namespace SoundSuck
                     Tell($"Finished recording to {fname}");
 
                     // Clean up resources.
+                    _audioWriter.Close();
                     _audioWriter.Dispose();
                     _audioWriter = null;
                     _loopbackCapture.Dispose();
                     _loopbackCapture = null;
+
+                    // Stop meter.
                     meterLevel.AddValue(0);
 
                     // Get user filename and rename temp.
@@ -246,13 +249,6 @@ namespace SoundSuck
 
                 Tell($"OUT: {id} {cap.ProductName}");
             }
-
-            //IN: -1 Microsoft Sound Mapper
-            //IN: 0 Microphone(Realtek(R) Audio) <<
-            //IN: 1 Microphone Array(Intel® Smart
-            //OUT: -1 Microsoft Sound Mapper
-            //OUT: 0 Headphones(Realtek(R) Audio) <<
-            //OUT: 1 Speakers(Realtek(R) Audio)
         }
         #endregion
     }
