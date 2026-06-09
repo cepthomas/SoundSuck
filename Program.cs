@@ -15,7 +15,7 @@ namespace SoundSuck
         [STAThread]
         static void Main(string[] args)
         {
-            // Handle unexpected esceptions.
+            // Handle unexpected exceptions.
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, e) => { HandleException(e.Exception, "UI Thread Exception"); };
             AppDomain.CurrentDomain.UnhandledException += (sender, e) => { HandleException((Exception)e.ExceptionObject, "Background Thread Exception"); };
