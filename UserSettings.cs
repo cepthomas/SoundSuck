@@ -32,8 +32,8 @@ namespace SoundSuck
         #endregion
 
         #region Persisted Non-editable Persisted Properties
-        //[Browsable(false)]
-        //public double Gain { get; set; } = 1.0;
+        [Browsable(false)]
+        public double Gain { get; set; } = 2.0;
         #endregion
     }
 }

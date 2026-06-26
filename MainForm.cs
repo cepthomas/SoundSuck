@@ -74,11 +74,11 @@ namespace SoundSuck
             meterLevel.DrawColor = _settings.DrawColor;
 
             //TODO use gain?
-            sldGain.Visible = false;
+            //sldGain.Visible = false;
             sldGain.DrawColor = _settings.DrawColor;
             sldGain.Minimum = 0.0;
-            sldGain.Maximum = 2.0;
-            sldGain.Value = 1.0;
+            sldGain.Maximum = 10.0;
+            sldGain.Value = _settings.Gain;
 
             Text = $"SoundSuck {MiscUtils.GetVersionString()}";
             Tell(Text);
@@ -141,16 +141,33 @@ namespace SoundSuck
                 _loopbackCapture.DataAvailable += (sender, args) =>
                 {
                     int num = args.BytesRecorded;
-                    _audioWriter.Write(args.Buffer, 0, num);
+                    float gain = (float)sldGain.Value;
 
-                    // Metering - abs max. TODO apply gain here.
+                    // Metering - abs max.
                     float max = float.MinValue;
                     for (int i = 0; i < num; i += 4)
                     {
-                        var val = BitConverter.ToSingle(args.Buffer, i);
+                        float val = BitConverter.ToSingle(args.Buffer, i);
+                        // Apply gain here.
+                        val *= gain;
                         max = Math.Max(max, Math.Abs(val));
+                        var bytes = BitConverter.GetBytes(val);
+                        _audioWriter.Write(bytes, 0, bytes.Length);
                     }
                     meterLevel.AddValue(max);
+
+
+                    /////// old way - no gain
+                    //int num = args.BytesRecorded;
+                    //_audioWriter.Write(args.Buffer, 0, num);
+                    //// Metering - abs max.
+                    //float max = float.MinValue;
+                    //for (int i = 0; i < num; i += 4)
+                    //{
+                    //    var val = BitConverter.ToSingle(args.Buffer, i);
+                    //    max = Math.Max(max, Math.Abs(val));
+                    //}
+                    //meterLevel.AddValue(max);
                 };
 
                 _loopbackCapture.RecordingStopped += (sender, args) =>
@@ -212,6 +229,7 @@ namespace SoundSuck
         /// </summary>
         void SaveSettings()
         {
+            _settings.Gain = sldGain.Value;
             _settings.FormGeometry = new Rectangle(Location.X, Location.Y, Width, Height);
             _settings.Save();
         }
