@@ -28,6 +28,9 @@ namespace SoundSuck
 
         /// <summary>Audio input.</summary>
         WasapiLoopbackCapture? _loopbackCapture = null;
+        // TODO Fix this eventually.
+        // WasapiOut / WasapiCapture / WasapiLoopbackCapture are [Obsolete] in favour of WasapiPlayer / WasapiRecorder. They still ship and still work.
+        // Use WasapiRecorderBuilder.WithProcessLoopback() for process-specific loopback, or configure a WasapiRecorder with a render device for system-wide loopback.
 
         /// <summary>Where you going?</summary>
         readonly string _tempDir = "";
